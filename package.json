@@ -1,0 +1,22 @@
+{
+  "name": "rpp2205-brandon-product_overview",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rpp2205-sdc-danakil/brandon-product_overview.git"
+  },
+  "author": "Brandon Bissing",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rpp2205-sdc-danakil/brandon-product_overview/issues"
+  },
+  "homepage": "https://github.com/rpp2205-sdc-danakil/brandon-product_overview#readme",
+  "devDependencies": {
+    "jest": "^29.3.1"
+  }
+}
