@@ -23,7 +23,7 @@ let files = ['product.csv', 'features.csv', 'styles.csv', 'photos.csv', 'skus.cs
             buffer.push(doc);
             counter++;
             try {
-              if (counter > 10000) {
+              if (counter > 100000) {
                 if (fileName === 'product') {
                   await Product.insertMany(buffer);
                 } else {
@@ -40,21 +40,21 @@ let files = ['product.csv', 'features.csv', 'styles.csv', 'photos.csv', 'skus.cs
                       operations.push({
                         'updateOne': {
                             'filter': { "_id": doc['product_id'] },
-                            'update': { "$push": { "styles": doc } }
+                            'update': { "$push": { "results": doc } }
                         }
                       })
                     } else if (fileName === 'photos') {
                       operations.push({
                         'updateOne': {
-                            'filter': { "_id": doc['product_id'], "styles": { $elemMatch: { "id": doc['style_id'] } } },
-                            'update': { "$push": { "styles.$.photos": doc } }
+                            'filter': { "_id": doc['product_id'], "results": { $elemMatch: { "id": doc['style_id'] } } },
+                            'update': { "$push": { "results.$.photos": doc } }
                         }
                       })
                     } else if (fileName === 'skus') {
                       operations.push({
                         'updateOne': {
-                            'filter': { "_id": doc['product_id'], "styles": { $elemMatch: { "id": doc['style_id'] } } },
-                            'update': { "$push": { "styles.$.skus": doc } }
+                            'filter': { "_id": doc['product_id'], "results": { $elemMatch: { "id": doc['style_id'] } } },
+                            'update': { "$push": { "results.$.skus": doc } }
                         }
                       })
                     } else if (fileName === 'related') {
@@ -99,21 +99,21 @@ let files = ['product.csv', 'features.csv', 'styles.csv', 'photos.csv', 'skus.cs
                         operations.push({
                           'updateOne': {
                               'filter': { "_id": doc['product_id'] },
-                              'update': { "$push": { "styles": doc } }
+                              'update': { "$push": { "results": doc } }
                           }
                         })
                       } else if (fileName === 'photos') {
                           operations.push({
                             'updateOne': {
-                                'filter': { "_id": doc['product_id'], "styles": { $elemMatch: { "id": doc['style_id'] } } },
-                                'update': { "$push": { "styles.$.photos": doc } }
+                                'filter': { "_id": doc['product_id'], "results": { $elemMatch: { "id": doc['style_id'] } } },
+                                'update': { "$push": { "results.$.photos": doc } }
                             }
                           })
                       } else if (fileName === 'skus') {
                           operations.push({
                             'updateOne': {
-                                'filter': { "_id": doc['product_id'], "styles": { $elemMatch: { "id": doc['style_id'] } } },
-                                'update': { "$push": { "styles.$.skus": doc } }
+                                'filter': { "_id": doc['product_id'], "results": { $elemMatch: { "id": doc['style_id'] } } },
+                                'update': { "$push": { "results.$.skus": doc } }
                             }
                           })
                       } else if (fileName === 'related') {

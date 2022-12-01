@@ -19,14 +19,14 @@ const productsSchema = new Schema({
       value: String
     }
   ],
-  styles: [
+  results: [
     {
       id: Number,
       product_id: Number,
       name: String,
       sale_price: String,
       original_price: String,
-      default_style: Boolean,
+      'default?': Boolean,
       photos: [
         {
           id: Number,
@@ -95,7 +95,7 @@ let modify = (data, fileName) => {
         name: data['name'],
         sale_price: data['sale_price'],
         original_price: data['original_price'],
-        default_style: value,
+        'default?': value,
         photos: [],
         skus: []
       };
@@ -140,6 +140,6 @@ let modify = (data, fileName) => {
 }
 
 const Product = model('Products', productsSchema);
-//const Product = model('Products_Test', productsSchema);
+//const Product = model('Products_Test', productsSchema, 'products_test');
 
 module.exports = {Product, modify};
