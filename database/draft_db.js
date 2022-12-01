@@ -2,42 +2,129 @@ const mongoose = require('mongoose');
 const { Schema, model, connect } = mongoose;
 connect(`mongodb://localhost:27017/products`);
 
-
 const productSchema = new Schema({
-  id: Number,
+  _id: Number,
   name: String,
   slogan: String,
   description: String,
   category: String,
   default_price: String,
-  features: [{
-    feature: String,
-    value: String
-  }],
-  styles: [{
-    id: Number,
-    name: String,
-    original_price: String,
-    sale_price: String,
-    default: Boolean,
-    photos: [{
-      thumbnail_url: String,
-      url: String
-    }],
-    skus: [
-      {
-        id: Number,
-        quantity: Number,
-        size: String
-      }
-    ]
-  }],
-  related: [Number]
 });
 
-const Product = model('Product', productSchema);
+const featureSchema = new Schema({
+  _id: Number,
+  product_id: Number,
+  feature: String,
+  value: String
+});
 
-module.exports.Product = Product;
+const photoSchema = new Schema({
+  _id: Number,
+  style_id: Number,
+  url: String,
+  thumbnail_url: String
+});
+
+const styleSchema = new Schema({
+  _id: Number,
+  product_id: Number,
+  name: String,
+  sale_price: String,
+  original_price: String,
+  default_style: Number
+});
+
+const skuSchema = new Schema({
+  _id: Number,
+  style_id: Number,
+  size: String,
+  quantity: Number
+});
+
+const relatedSchema = new Schema({
+  _id: Number,
+  current_product_id: Number,
+  related_product_id: Number
+});
+
+let modify = (data, fileName) => {
+  let doc = null;
+
+  if (fileName === 'product') {
+    doc = new Product({
+      _id: data['id'],
+      name: data['name'],
+      slogan: data['slogan'],
+      description: data['description'],
+      category: data['category'],
+      default_price: data['default_price']
+    });
+
+    return doc;
+
+  } else if (fileName === 'features') {
+    doc = new Feature({
+      _id: data['id'],
+      product_id: data['product_id'],
+      feature: data['feature'],
+      value: data['value']
+    });
+
+    return doc;
+
+  } else if (fileName === 'photos') {
+
+    doc = new Photo({
+      _id: data['id'],
+      style_id: data['styleId'],
+      url: data['url'],
+      thumbnail_url: data['thumbnail_url']
+    });
+
+    return doc;
+
+  } else if (fileName === 'styles') {
+    doc = new Style({
+      _id: data['id'],
+      product_id: data['productId'],
+      name: data['name'],
+      sale_price: data['sale_price'],
+      original_price: data['original_price'],
+      default_style: data['default_style'],
+    });
+
+    return doc;
+
+  } else if (fileName === 'skus') {
+    doc = new Sku({
+      _id: data['id'],
+      style_id: data['styleId'],
+      size: data['size'],
+      quantity: data['quantity']
+    });
+
+    return doc;
+
+  } else if (fileName === 'related') {
+    doc = new Related({
+      _id: data['id'],
+      current_product_id: data['current_product_id'],
+      related_product_id: data['related_product_id']
+    });
+
+    return doc;
+  }
+}
+
+
+const Product = model('Product', productSchema);
+const Feature = model('Feature', featureSchema);
+const Photo = model('Photo', photoSchema);
+const Style = model('Style', styleSchema);
+const Sku = model('Sku', skuSchema);
+const Related = model('Related', relatedSchema, 'related');
+
+module.exports = {Product, Feature, Photo, Style, Sku, Related, modify};
 
 // //list products
 // //GET /products
