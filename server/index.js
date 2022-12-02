@@ -10,6 +10,8 @@ app.get('/products/:product_id/styles', getStylesHandler);
 
 app.get('/products/:product_id/related', getRelatedHandler);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
+
+module.exports = server;

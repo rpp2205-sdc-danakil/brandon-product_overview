@@ -1,4 +1,4 @@
-require('dotenv').config();
+//require('dotenv').config();
 const db = require('../../database/db.js');
 const Product = db.Product;
 
@@ -9,18 +9,11 @@ module.exports = {
 
     return Product.findById(id).exec()
       .then(result => {
-        res.status(200).send(result.data);
+        res.status(200).send(result);
       })
       .catch(err => {
         res.status(500).send(err);
-      })
-    // axios.get(`${API_Link}/products/${product_id}`, auth)
-    //   .then(response => {
-    //     res.status(200).send(response.data)
-    //   })
-    //   .catch(err => {
-    //     res.status(500).send(err);
-    //   })
+      });
   },
 
   getRelatedHandler: (req, res) => {
@@ -28,7 +21,9 @@ module.exports = {
 
     return Product.findById(id).exec()
       .then(result => {
-        let related = result.related.filter(item => item.related_product_id);
+        //let related = result.related.filter(item => item.related_product_id);
+        let related = result.related.map(item => item.related_product_id);
+        console.log('related:', related);
         res.status(200).send(related);
       })
       .catch(err => {
@@ -48,7 +43,7 @@ module.exports = {
 
     return Product.findById(id).exec()
     .then(result => {
-      res.status(200).send(result.styles);
+      res.status(200).send(result.results);
     })
     .catch(err => {
       res.status(500).send(err);
