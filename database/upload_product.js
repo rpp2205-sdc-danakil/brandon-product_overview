@@ -15,7 +15,7 @@ let files = ['product.csv', 'features.csv', 'styles.csv', 'photos.csv', 'skus.cs
         console.log('testing file', fileName);
         let counter = 0;
         let stream = fs.createReadStream(`../etl/${files[i]}`)
-          .pipe(csv())
+          .pipe(fileName === 'photos' ? csv({quote:'\\'}) : csv())
           .on('error', reject)
           .on('data', async data => {
             stream.pause();
