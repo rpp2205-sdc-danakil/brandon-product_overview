@@ -58,6 +58,11 @@ let modify = (data, fileName) => {
   let doc = null;
 
   if (fileName === 'product') {
+    // let name = data['name'].replace(/['"]+/g, '');
+    // let slogan = data['slogan'].replace(/['"]+/g, '');
+    // let category = data['category'].replace(/['"]+/g, '');
+    // let description = data['description'].replace(/['"]+/g, '');
+
     doc = new Product({
       _id: data['id'],
       name: data['name'],
@@ -70,18 +75,28 @@ let modify = (data, fileName) => {
     return doc;
 
   } else if (fileName === 'features') {
+    let value = data['value'];
+
+    if (value === 'null') {
+      value = JSON.parse(value);
+    }
 
     doc = {
       id: parseInt(data['id']),
       product_id: parseInt(data['product_id']),
       feature: data['feature'],
-      value: data['value']
+      value: value
     };
 
     return doc;
 
   } else if (fileName === 'styles') {
+      let sale_price = data['sale_price'];
       let value = false;
+
+      if (sale_price === 'null') {
+        sale_price = JSON.parse(sale_price);
+      }
 
       if (parseInt(data['default_style']) === 1) {
         value = true;
@@ -93,7 +108,7 @@ let modify = (data, fileName) => {
         id: parseInt(data['id']),
         product_id: parseInt(data['productId']),
         name: data['name'],
-        sale_price: data['sale_price'],
+        sale_price: sale_price,
         original_price: data['original_price'],
         'default?': value,
         photos: [],
@@ -103,23 +118,26 @@ let modify = (data, fileName) => {
     return doc;
 
   } else if (fileName === 'photos') {
+    let url = data['url'].replace(/['"]+/g, '');
+    let thumbnail = data['thumbnail_url'].replace(/['"]+/g, '');
 
     doc = {
       id: parseInt(data['id']),
       style_id: parseInt(data['styleId']),
-      url: data['url'],
-      thumbnail_url: data['thumbnail_url'],
+      url: url,
+      thumbnail_url: thumbnail,
       product_id: styleId_to_prodId[data['styleId']]
     };
 
     return doc;
 
   } else if (fileName === 'skus') {
+    let size = data['size'].replace(/['"]+/g, '');
 
     doc = {
       id: parseInt(data['id']),
       style_id: parseInt(data['styleId']),
-      size: data['size'],
+      size: size,
       quantity: parseInt(data['quantity']),
       product_id: styleId_to_prodId[data['styleId']]
     }
@@ -139,7 +157,8 @@ let modify = (data, fileName) => {
   }
 }
 
-const Product = model('Products', productsSchema);
+//const Product = model('Products', productsSchema);
 //const Product = model('Products_Test', productsSchema, 'products_test');
+const Product = model('Products_Test_Mix', productsSchema);
 
 module.exports = {Product, modify};

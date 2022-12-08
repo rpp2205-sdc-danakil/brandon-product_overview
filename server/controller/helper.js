@@ -7,6 +7,14 @@ module.exports = {
   getProductHandler: (req, res) => {
     let id = req.params.product_id;
 
+    // return Product.findById(id, {slogan: 0, description: 0, features: 0, results: 0, related: 0}).exec()
+    // .then(result => {
+    //   res.status(200).send(result);
+    // })
+    // .catch(err => {
+    //   res.status(500).send(err);
+    // });
+
     return Product.findById(id).exec()
       .then(result => {
         res.status(200).send(result);
@@ -28,7 +36,7 @@ module.exports = {
       })
       .catch(err => {
         res.status(500).send(err);
-      })
+      });
     // axios.get(`${API_Link}/products/${product_id}/related`, auth)
     //   .then(response => {
     //     res.status(200).send(response.data);
@@ -44,6 +52,7 @@ module.exports = {
     return Product.findById(id).exec()
     .then(result => {
       res.status(200).send(result.results);
+      //res.status(200).send(result); //USE THIS ONE
     })
     .catch(err => {
       res.status(500).send(err);
