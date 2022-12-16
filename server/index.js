@@ -2,7 +2,9 @@ const express = require('express');
 const db = require('../database/db.js');
 const port = 3001;
 const app = express();
-const { getProductHandler, getRelatedHandler, getStylesHandler } = require('./controller/helper.js');
+const { getProductsHandler, getProductHandler, getRelatedHandler, getStylesHandler } = require('./controller/helper.js');
+
+app.get('/products', getProductsHandler);
 
 app.get('/products/:product_id', getProductHandler);
 

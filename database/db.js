@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 const { Schema, model, connect } = mongoose;
-connect(`mongodb://localhost:27017/products`);
+//connect(`mongodb://localhost:27017/products`);
+//connect(`mongodb://ec2-3-142-239-13.us-east-2.compute.amazonaws.com/27017/products`);
+connect(`mongodb://3.143.172.252:27017/products`);
+
 
 let styleId_to_prodId = {};
 
 const productsSchema = new Schema({
   _id: Number,
+  product_id: Number,
   name: String,
   slogan: String,
   description: String,
@@ -13,7 +17,7 @@ const productsSchema = new Schema({
   default_price: String,
   features: [
     {
-      id: Number,
+      _id: Number,
       product_id: Number,
       feature: String,
       value: String
@@ -21,7 +25,8 @@ const productsSchema = new Schema({
   ],
   results: [
     {
-      id: Number,
+      _id: Number,
+      style_id: Number,
       product_id: Number,
       name: String,
       sale_price: String,
@@ -29,7 +34,7 @@ const productsSchema = new Schema({
       'default?': Boolean,
       photos: [
         {
-          id: Number,
+          _id: Number,
           style_id: Number,
           url: String,
           thumbnail_url: String
@@ -37,7 +42,7 @@ const productsSchema = new Schema({
       ],
       skus: [
         {
-          id: Number,
+          _id: Number,
           style_id: Number,
           size: String,
           quantity: Number
@@ -47,24 +52,80 @@ const productsSchema = new Schema({
   ],
   related: [
     {
-      id: Number,
+      _id: Number,
       current_product_id: Number,
       related_product_id: Number
     }
   ]
 });
 
+// const productsSchema = new Schema({
+//   _id: Number,
+//   name: String,
+//   slogan: String,
+//   description: String,
+//   category: String,
+//   default_price: String,
+//   features: [
+//     {
+//       id: Number,
+//       product_id: Number,
+//       feature: String,
+//       value: String
+//     }
+//   ],
+//   results: [
+//     {
+//       id: Number,
+//       product_id: Number,
+//       name: String,
+//       sale_price: String,
+//       original_price: String,
+//       'default?': Boolean,
+//       photos: [
+//         {
+//           id: Number,
+//           style_id: Number,
+//           url: String,
+//           thumbnail_url: String
+//         }
+//       ],
+//       skus: [
+//         {
+//           id: Number,
+//           style_id: Number,
+//           size: String,
+//           quantity: Number
+//         }
+//       ]
+//     }
+//   ],
+//   related: [
+//     {
+//       id: Number,
+//       current_product_id: Number,
+//       related_product_id: Number
+//     }
+//   ]
+// });
+
 let modify = (data, fileName) => {
   let doc = null;
 
   if (fileName === 'product') {
-    // let name = data['name'].replace(/['"]+/g, '');
-    // let slogan = data['slogan'].replace(/['"]+/g, '');
-    // let category = data['category'].replace(/['"]+/g, '');
-    // let description = data['description'].replace(/['"]+/g, '');
+
+    // doc = new Product({
+    //   _id: data['id'],
+    //   name: data['name'],
+    //   slogan: data['slogan'],
+    //   description: data['description'],
+    //   category: data['category'],
+    //   default_price: data['default_price']
+    // });
 
     doc = new Product({
       _id: data['id'],
+      product_id: data['id'],
       name: data['name'],
       slogan: data['slogan'],
       description: data['description'],
@@ -81,8 +142,15 @@ let modify = (data, fileName) => {
       value = JSON.parse(value);
     }
 
+    // doc = {
+    //   id: parseInt(data['id']),
+    //   product_id: parseInt(data['product_id']),
+    //   feature: data['feature'],
+    //   value: value
+    // };
+
     doc = {
-      id: parseInt(data['id']),
+      _id: parseInt(data['id']),
       product_id: parseInt(data['product_id']),
       feature: data['feature'],
       value: value
@@ -104,14 +172,26 @@ let modify = (data, fileName) => {
 
       styleId_to_prodId[data['id']] = parseInt(data['productId']);
 
+      // doc = {
+      //   id: parseInt(data['id']),
+      //   product_id: parseInt(data['productId']),
+      //   name: data['name'],
+      //   sale_price: sale_price,
+      //   original_price: data['original_price'],
+      //   'default?': value,
+      //   photos: [],
+      //   skus: []
+      // };
+
       doc = {
-        id: parseInt(data['id']),
+        _id: parseInt(data['id']),
+        style_id: parseInt(data['id']),
         product_id: parseInt(data['productId']),
         name: data['name'],
         sale_price: sale_price,
         original_price: data['original_price'],
         'default?': value,
-        photos: [],
+        photos: [{thumbnail_url: null}],
         skus: []
       };
 
@@ -120,9 +200,23 @@ let modify = (data, fileName) => {
   } else if (fileName === 'photos') {
     let url = data['url'].replace(/['"]+/g, '');
     let thumbnail = data['thumbnail_url'].replace(/['"]+/g, '');
+    // Product.findOneAndUpdate({_id: styleId_to_prodId[data['styleId']], "results": { $elemMatch: { "_id": data['styleId'] } }}, {$pull: {"results.$.photos": {thumbnail_url: null}}}).exec()
+    //   .then(result => {})
+    //   .catch(error => {console.error(err)});
+    (async function updateOne() {
+      await Product.findOneAndUpdate({_id: styleId_to_prodId[data['styleId']], "results": { $elemMatch: { "_id": data['styleId'] } }}, {$pull: {"results.$.photos": {thumbnail_url: null}}})
+    })()
+
+    // doc = {
+    //   id: parseInt(data['id']),
+    //   style_id: parseInt(data['styleId']),
+    //   url: url,
+    //   thumbnail_url: thumbnail,
+    //   product_id: styleId_to_prodId[data['styleId']]
+    // };
 
     doc = {
-      id: parseInt(data['id']),
+      _id: parseInt(data['id']),
       style_id: parseInt(data['styleId']),
       url: url,
       thumbnail_url: thumbnail,
@@ -134,8 +228,16 @@ let modify = (data, fileName) => {
   } else if (fileName === 'skus') {
     let size = data['size'].replace(/['"]+/g, '');
 
+    // doc = {
+    //   id: parseInt(data['id']),
+    //   style_id: parseInt(data['styleId']),
+    //   size: size,
+    //   quantity: parseInt(data['quantity']),
+    //   product_id: styleId_to_prodId[data['styleId']]
+    // }
+
     doc = {
-      id: parseInt(data['id']),
+      _id: parseInt(data['id']),
       style_id: parseInt(data['styleId']),
       size: size,
       quantity: parseInt(data['quantity']),
@@ -146,8 +248,14 @@ let modify = (data, fileName) => {
 
   } else if (fileName === 'related') {
 
+    // doc = {
+    //   id: parseInt(data['id']),
+    //   current_product_id: parseInt(data['current_product_id']),
+    //   related_product_id: parseInt(data['related_product_id'])
+    // };
+
     doc = {
-      id: parseInt(data['id']),
+      _id: parseInt(data['id']),
       current_product_id: parseInt(data['current_product_id']),
       related_product_id: parseInt(data['related_product_id'])
     };
@@ -157,8 +265,8 @@ let modify = (data, fileName) => {
   }
 }
 
-//const Product = model('Products', productsSchema);
+const Product = model('Product', productsSchema);
 //const Product = model('Products_Test', productsSchema, 'products_test');
-const Product = model('Products_Test_Mix', productsSchema);
+//const Product = model('Products_Test_Mix', productsSchema);
 
 module.exports = {Product, modify};
