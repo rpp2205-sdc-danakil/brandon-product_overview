@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema, model, connect } = mongoose;
-connect(`mongodb://localhost:27017/products`);
+//connect(`mongodb://localhost:27017/products`);
+//connect(`mongodb://ec2-3-142-239-13.us-east-2.compute.amazonaws.com/27017/products`);
+connect(`mongodb://3.143.172.252:27017/products`);
+
 
 let styleId_to_prodId = {};
 
@@ -262,7 +265,7 @@ let modify = (data, fileName) => {
   }
 }
 
-const Product = model('Products', productsSchema);
+const Product = model('Product', productsSchema);
 //const Product = model('Products_Test', productsSchema, 'products_test');
 //const Product = model('Products_Test_Mix', productsSchema);
 
